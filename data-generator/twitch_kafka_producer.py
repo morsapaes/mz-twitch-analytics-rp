@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import datetime
 import sys
+import os
 import twitch
 from itertools import islice
 import json

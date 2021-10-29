@@ -21,12 +21,16 @@ services:
      - 9092:9092
      - 8081:8081
      - 8082:8082
-  kafka-generator:
+  data-generator:
     build: ./data-generator
     image: data-generator:latest
-    container_name: kafka-generator
+    container_name: data-generator
     depends_on:
       - redpanda
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.app.schedule: "@every 60s"
+      ofelia.job-exec.app.command: "python -u ./twitch_kafka_producer.py"
   materialized:
     image: materialize/materialized:v0.9.0
     container_name: materialized
@@ -38,7 +42,7 @@ services:
     image: materialize/cli
     container_name: mzcli
   postgres:
-    build: ./postgres-image
+    image: postgres:11-alpine
     container_name: postgres
     ports:
      - 5432:5432
@@ -48,9 +52,22 @@ services:
     volumes:
      - ${PWD}/postgres-image:/docker-entrypoint-initdb.d
   metabase:
-    image: materialize/metabase:v0.0.5
+    image: iwalucas/metabase
     container_name: metabase
     depends_on:
        - materialized
     ports:
       - 3030:3000
+    environment:
+      - MB_PLUGINS_DIR=/app/plugins
+    volumes:
+     - ${PWD}/metabase-image/:/app/plugins
+  ofelia:
+    image: mcuadros/ofelia:latest
+    container_name: ofelia
+    restart: always
+    depends_on:
+      - data-generator
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
