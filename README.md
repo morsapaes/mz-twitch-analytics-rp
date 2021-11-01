@@ -139,6 +139,10 @@ WHERE game_id IS NOT NULL
 ```
 
 ```sql
+SELECT * FROM mv_stream_15min ORDER BY started_at ASC LIMIT 10;
+```
+
+```sql
 SELECT MIN(started_at) FROM mv_stream_15min;
 ```
 
@@ -159,7 +163,7 @@ JOIN stream_tag_ids st ON un.tg = st.tag_id AND NOT st.is_auto;
 ```
 
 ```sql
-SELECT * FROM mv_agg_stream_tag ORDER BY cnt_tag DESC;
+SELECT * FROM mv_agg_stream_tag ORDER BY cnt_tag DESC LIMIT 10;
 ```
 
 #### Who are the most popular streamers for each of the top10 games?
@@ -185,6 +189,10 @@ LATERAL (
           ORDER BY sum_viewer_cnt DESC
           LIMIT 1
         );
+```
+
+```sql
+SELECT * FROM mv_stream_game_top10;
 ```
 
 ## Metabase
