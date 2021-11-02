@@ -9,7 +9,7 @@
 The data generator produces **JSON-formatted** events about [active streams](https://dev.twitch.tv/docs/api/reference/#get-streams) on Twitch into the `twitch-streams` Redpanda topic. To check that the topic has been created:
 
 ```bash
-docker-compose exec redpanda rpk topic list #or curl -s "localhost:8082/topics" | jq .
+docker-compose exec redpanda rpk topic list
 ```
 
 and that there's data landing:
