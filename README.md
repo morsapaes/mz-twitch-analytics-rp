@@ -80,7 +80,7 @@ FROM v_twitch_stream_conv;
 **1.** One way to connect to a Postgres database in Materialize is to use a [Postgres source](https://materialize.com/docs/sql/create-source/postgres/), which uses [logical replication](https://www.postgresql.org/docs/10/logical-replication.html) to continuously ingest changes and maintain freshly updated results:
 
 ```sql
-CREATE MATERIALIZED SOURCE mz_source 
+CREATE MATERIALIZED SOURCE mz_source
 FROM POSTGRES
   CONNECTION 'host=postgres port=5432 user=postgres dbname=postgres password=postgres'
   PUBLICATION 'mz_source';
@@ -106,21 +106,21 @@ GROUP BY game_id, game_name;
 **What are the top10 games being played?**
 
 ```sql
-SELECT game_name, 
-       cnt_streams, 
-       agg_viewer_cnt 
-FROM mv_agg_stream_game 
-ORDER BY agg_viewer_cnt 
+SELECT game_name,
+       cnt_streams,
+       agg_viewer_cnt
+FROM mv_agg_stream_game
+ORDER BY agg_viewer_cnt
 DESC LIMIT 10;
 ```
 
 **Is anyone playing DOOM?**
 
 ```sql
-SELECT game_name, 
-       cnt_streams, 
-       agg_viewer_cnt 
-FROM mv_agg_stream_game 
+SELECT game_name,
+       cnt_streams,
+       agg_viewer_cnt
+FROM mv_agg_stream_game
 WHERE upper(game_name) LIKE 'DOOM%';
 ```
 
@@ -134,7 +134,7 @@ SELECT title,
        started_at
 FROM v_twitch_stream
 WHERE game_id IS NOT NULL
-  AND (mz_logical_timestamp() >= (extract('epoch' from started_at)*1000)::bigint 
+  AND (mz_logical_timestamp() >= (extract('epoch' from started_at)*1000)::bigint
   AND mz_logical_timestamp() < (extract('epoch' from started_at)*1000)::bigint + 900000);
 ```
 
@@ -155,7 +155,7 @@ SELECT st.localization_name AS tag,
 FROM (
        SELECT tg, COUNT(*) AS cnt_tag
        FROM v_twitch_stream ts,
-            unnest(tag_ids) tg 
+            unnest(tag_ids) tg
        WHERE game_id IS NOT NULL
        GROUP BY tg
      ) un
@@ -169,10 +169,10 @@ SELECT * FROM mv_agg_stream_tag ORDER BY cnt_tag DESC LIMIT 10;
 #### Who are the most popular streamers for each of the top10 games?
 
 ```sql
-CREATE VIEW v_stream_game_top10 AS 
-SELECT game_id, game_name, agg_viewer_cnt 
-FROM mv_agg_stream_game 
-ORDER BY agg_viewer_cnt DESC 
+CREATE VIEW v_stream_game_top10 AS
+SELECT game_id, game_name, agg_viewer_cnt
+FROM mv_agg_stream_game
+ORDER BY agg_viewer_cnt DESC
 LIMIT 10;
 ```
 
@@ -210,7 +210,7 @@ To visualize the results in [Metabase](https://www.metabase.com/):
 
 Field             | Value
 ----------------- | ----------------
-Database          | Materialize
+Database          | PostgreSQL
 Name              | twitch
 Host              | **materialized**
 Port              | **6875**
@@ -218,7 +218,7 @@ Database name     | **materialize**
 Database username | **materialize**
 Database password | Leave empty
 
-**5.** Click **Ask a question** -> **Native query**.
+**5.** Click **Ask a question** -> **Native query**. You can find instructions to reproduce the dashboard below under [metabase/README.md](/metabase/README.md#metabase).
 
 **6.** Under **Select a database**, choose **twitch**.
 
@@ -227,10 +227,10 @@ Database password | Leave empty
 ```sql
 SELECT SUM(cnt_streams) FROM mv_agg_stream_game;
 ```
-    
+
 and hit **Save**. You need to do this for each visualization you’re planning to add to the dashboard that Metabase prompts you to create.
 
-**8.** Once you have a dashboard set up, you can manually set the refresh rate to 1 second by adding `#refresh=1` to the end of the URL: 
+**8.** Once you have a dashboard set up, you can manually set the refresh rate to 1 second by adding `#refresh=1` to the end of the URL:
 
 `http://localhost:3030/dashboard/1-whats-streaming-on-twitch#refresh=1`
 
@@ -242,10 +242,10 @@ and opening the modified URL in a new tab:
 
 ### TODO
 
-- [ ] **Improve the Kafka producer:** 
+- [ ] **Improve the Kafka producer:**
 
     In the future, it'd be preferable to use [PubSub](https://dev.twitch.tv/docs/pubsub) to subscribe to a topic for updates instead of periodically sending requests to the Twitch Helix API.
-    
-- [ ] **Pre-load the Metabase dashboard:** 
+
+- [ ] **Pre-load the Metabase dashboard:**
 
     Include a backup of Metabase's [embedded database](https://www.metabase.com/docs/latest/operations-guide/backing-up-metabase-application-data.html) (H2) with a bootstrapped dashboard to save users some time in this step.
