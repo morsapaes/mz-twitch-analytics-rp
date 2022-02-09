@@ -1,6 +1,6 @@
 # Twitch Data Generator
 
-To ingest Twitch data into Redpanda, we’ll use use existing Python wrappers for the Twitch Helix API ([`python-twitch-client`](https://github.com/tsifrer/python-twitch-client)) and Kafka ([`kafka-python`](https://github.com/dpkp/kafka-python)) to write a minimal producer.
+To ingest Twitch data into Redpanda, we’ll use existing Python wrappers for the Twitch Helix API ([`python-twitch-client`](https://github.com/tsifrer/python-twitch-client)) and Kafka ([`kafka-python`](https://github.com/dpkp/kafka-python)) to write a minimal producer.
 
 ## Twitch Authentication Flow
 
